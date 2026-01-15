@@ -1,13 +1,11 @@
 """Base entity for LightStack integration."""
+
 from __future__ import annotations
 
 from homeassistant.helpers.device_registry import DeviceInfo
 from homeassistant.helpers.update_coordinator import CoordinatorEntity
 
-from .const import DOMAIN
-from .const import MANUFACTURER
-from .const import NAME
-from .const import VERSION
+from .const import DOMAIN, MANUFACTURER, NAME, VERSION
 from .coordinator import LightStackCoordinator
 
 

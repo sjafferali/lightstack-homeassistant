@@ -1,4 +1,5 @@
 """Sensor platform for LightStack integration."""
+
 from __future__ import annotations
 
 from typing import Any
@@ -8,22 +9,24 @@ from homeassistant.config_entries import ConfigEntry
 from homeassistant.core import HomeAssistant
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
 
-from .const import ATTR_ACTIVE_COUNT
-from .const import ATTR_ALERT_KEY
-from .const import ATTR_DESCRIPTION
-from .const import ATTR_EFFECTIVE_PRIORITY
-from .const import ATTR_IS_ALL_CLEAR
-from .const import ATTR_LAST_TRIGGERED
-from .const import ATTR_LED_COLOR
-from .const import ATTR_LED_COLOR_NAME
-from .const import ATTR_LED_EFFECT
-from .const import ATTR_PRIORITY_NAME
-from .const import DOMAIN
-from .const import ICON_ALERT
-from .const import ICON_CHECK_CIRCLE
-from .const import LED_COLOR_NAMES
-from .const import PRIORITY_NAMES
-from .const import STATE_ALL_CLEAR
+from .const import (
+    ATTR_ACTIVE_COUNT,
+    ATTR_ALERT_KEY,
+    ATTR_DESCRIPTION,
+    ATTR_EFFECTIVE_PRIORITY,
+    ATTR_IS_ALL_CLEAR,
+    ATTR_LAST_TRIGGERED,
+    ATTR_LED_COLOR,
+    ATTR_LED_COLOR_NAME,
+    ATTR_LED_EFFECT,
+    ATTR_PRIORITY_NAME,
+    DOMAIN,
+    ICON_ALERT,
+    ICON_CHECK_CIRCLE,
+    LED_COLOR_NAMES,
+    PRIORITY_NAMES,
+    STATE_ALL_CLEAR,
+)
 from .coordinator import LightStackCoordinator
 from .entity import LightStackEntity
 

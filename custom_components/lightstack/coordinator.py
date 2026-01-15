@@ -1,24 +1,24 @@
 """DataUpdateCoordinator for LightStack integration."""
+
 from __future__ import annotations
 
 import asyncio
+from dataclasses import dataclass, field
 import logging
-from dataclasses import dataclass
-from dataclasses import field
 from typing import Any
 
-from homeassistant.core import callback
-from homeassistant.core import HomeAssistant
+from homeassistant.core import HomeAssistant, callback
 from homeassistant.helpers.update_coordinator import DataUpdateCoordinator
 
-from .const import DOMAIN
-from .const import RECONNECT_INTERVAL
-from .const import WS_EVENT_ALERT_CLEARED
-from .const import WS_EVENT_ALERT_TRIGGERED
-from .const import WS_EVENT_ALL_ALERTS_CLEARED
-from .const import WS_EVENT_CURRENT_ALERT_CHANGED
-from .websocket import LightStackConnectionError
-from .websocket import LightStackWebSocket
+from .const import (
+    DOMAIN,
+    RECONNECT_INTERVAL,
+    WS_EVENT_ALERT_CLEARED,
+    WS_EVENT_ALERT_TRIGGERED,
+    WS_EVENT_ALL_ALERTS_CLEARED,
+    WS_EVENT_CURRENT_ALERT_CHANGED,
+)
+from .websocket import LightStackConnectionError, LightStackWebSocket
 
 _LOGGER = logging.getLogger(__name__)
 

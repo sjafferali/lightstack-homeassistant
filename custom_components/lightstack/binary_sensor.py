@@ -1,18 +1,18 @@
 """Binary sensor platform for LightStack integration."""
+
 from __future__ import annotations
 
 from typing import Any
 
-from homeassistant.components.binary_sensor import BinarySensorDeviceClass
-from homeassistant.components.binary_sensor import BinarySensorEntity
+from homeassistant.components.binary_sensor import (
+    BinarySensorDeviceClass,
+    BinarySensorEntity,
+)
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.core import HomeAssistant
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
 
-from .const import ATTR_ACTIVE_COUNT
-from .const import DOMAIN
-from .const import ICON_ALERT_CIRCLE
-from .const import ICON_CHECK_CIRCLE
+from .const import ATTR_ACTIVE_COUNT, DOMAIN, ICON_ALERT_CIRCLE, ICON_CHECK_CIRCLE
 from .coordinator import LightStackCoordinator
 from .entity import LightStackEntity
 

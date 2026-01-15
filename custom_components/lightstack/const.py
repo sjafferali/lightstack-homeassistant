@@ -1,4 +1,5 @@
 """Constants for LightStack integration."""
+
 from typing import Final
 
 # Base component constants

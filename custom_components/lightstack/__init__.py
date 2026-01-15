@@ -6,32 +6,33 @@ LightStack is a priority-based alert management system for Inovelli LED switches
 For more details about this integration, please refer to
 https://github.com/sjafferali/lightstack-homeassistant
 """
+
 from __future__ import annotations
 
 import logging
 
-import voluptuous as vol
 from homeassistant.config_entries import ConfigEntry
-from homeassistant.core import HomeAssistant
-from homeassistant.core import ServiceCall
+from homeassistant.core import HomeAssistant, ServiceCall
 from homeassistant.exceptions import ConfigEntryNotReady
 from homeassistant.helpers import config_validation as cv
 from homeassistant.helpers.aiohttp_client import async_get_clientsession
+import voluptuous as vol
 
-from .const import ATTR_ALERT_KEY
-from .const import ATTR_NOTE
-from .const import ATTR_PRIORITY
-from .const import CONF_HOST
-from .const import CONF_PORT
-from .const import DOMAIN
-from .const import PLATFORMS
-from .const import SERVICE_CLEAR_ALERT
-from .const import SERVICE_CLEAR_ALL_ALERTS
-from .const import SERVICE_TRIGGER_ALERT
-from .const import STARTUP_MESSAGE
+from .const import (
+    ATTR_ALERT_KEY,
+    ATTR_NOTE,
+    ATTR_PRIORITY,
+    CONF_HOST,
+    CONF_PORT,
+    DOMAIN,
+    PLATFORMS,
+    SERVICE_CLEAR_ALERT,
+    SERVICE_CLEAR_ALL_ALERTS,
+    SERVICE_TRIGGER_ALERT,
+    STARTUP_MESSAGE,
+)
 from .coordinator import LightStackCoordinator
-from .websocket import LightStackConnectionError
-from .websocket import LightStackWebSocket
+from .websocket import LightStackConnectionError, LightStackWebSocket
 
 _LOGGER = logging.getLogger(__name__)
 
