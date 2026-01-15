@@ -33,7 +33,7 @@ class LightStackEntity(CoordinatorEntity[LightStackCoordinator]):
             model="Alert Manager",
             sw_version=VERSION,
             configuration_url=(
-                f"ws://{self.coordinator.websocket._host}"
-                f":{self.coordinator.websocket._port}/api/v1/ws"
+                f"http://{self.coordinator.websocket._host}"
+                f":{self.coordinator.websocket._port}/"
             ),
         )
