@@ -1,0 +1,59 @@
+trigger_alert:
+  name: Trigger Alert
+  description: Trigger a LightStack alert to activate LED notification
+  fields:
+    alert_key:
+      name: Alert Key
+      description: Unique identifier for the alert (e.g., "garage_door_open")
+      required: true
+      example: "garage_door_open"
+      selector:
+        text:
+    priority:
+      name: Priority
+      description: Override priority level (1=Critical, 2=High, 3=Medium, 4=Low, 5=Info)
+      required: false
+      example: 1
+      selector:
+        number:
+          min: 1
+          max: 5
+          mode: slider
+    note:
+      name: Note
+      description: Optional note for the audit trail
+      required: false
+      example: "Triggered by automation"
+      selector:
+        text:
+
+clear_alert:
+  name: Clear Alert
+  description: Clear a specific LightStack alert
+  fields:
+    alert_key:
+      name: Alert Key
+      description: The alert key to clear
+      required: true
+      example: "garage_door_open"
+      selector:
+        text:
+    note:
+      name: Note
+      description: Optional note for the audit trail
+      required: false
+      example: "Cleared by automation"
+      selector:
+        text:
+
+clear_all_alerts:
+  name: Clear All Alerts
+  description: Clear all active LightStack alerts
+  fields:
+    note:
+      name: Note
+      description: Optional note for the audit trail
+      required: false
+      example: "Bulk clear by user"
+      selector:
+        text:

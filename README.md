@@ -1,4 +1,4 @@
-# Lightstack custom component
+# LightStack Home Assistant Integration
 
 [![GitHub Release][releases-shield]][releases]
 [![GitHub Activity][commits-shield]][commits]
@@ -9,84 +9,200 @@
 
 [![hacs][hacsbadge]][hacs]
 [![Project Maintenance][maintenance-shield]][user_profile]
-[![BuyMeCoffee][buymecoffeebadge]][buymecoffee]
 
-[![Discord][discord-shield]][discord]
-[![Community Forum][forum-shield]][forum]
+A Home Assistant custom component for [LightStack](https://github.com/sjafferali/LightStack) - a priority-based alert management system for Inovelli LED switches.
 
-**TO BE REMOVED: If you need help, as a developer, to use this custom component tempalte,
-please look at the [User Guide in the Cookiecutter documentation](https://cookiecutter-homeassistant-custom-component.readthedocs.io/en/stable/quickstart.html)**
+## Features
 
-**This component will set up the following platforms.**
+- **Real-time Updates**: Uses WebSocket for instant push notifications - no polling required
+- **Current Alert Sensor**: Shows the highest priority active alert with LED color/effect attributes
+- **Alert Status Binary Sensor**: Simple on/off indicator when any alert is active
+- **Clear All Button**: One-click button to clear all active alerts
+- **Services**: Full control via Home Assistant services for automations
 
-| Platform        | Description                                     |
-| --------------- | ----------------------------------------------- |
-| `binary_sensor` | Show something `True` or `False`.               |
-| `sensor`        | Show info from Lightstack custom component API. |
-| `switch`        | Switch something `True` or `False`.             |
+## Platforms
 
-![example][exampleimg]
+| Platform | Description |
+|----------|-------------|
+| `sensor` | Shows the current (highest priority) active alert name with LED attributes |
+| `binary_sensor` | Indicates if any alert is currently active (`on`) or all clear (`off`) |
+| `button` | Clear all active alerts with a single press |
+
+## Services
+
+| Service | Description |
+|---------|-------------|
+| `lightstack.trigger_alert` | Trigger an alert by key, with optional priority override |
+| `lightstack.clear_alert` | Clear a specific alert by key |
+| `lightstack.clear_all_alerts` | Clear all active alerts |
 
 ## Installation
 
-1. Using the tool of choice open the directory (folder) for your HA configuration (where you find `configuration.yaml`).
-2. If you do not have a `custom_components` directory (folder) there, you need to create it.
-3. In the `custom_components` directory (folder) create a new folder called `lightstack_homeassistant`.
-4. Download _all_ the files from the `custom_components/lightstack_homeassistant/` directory (folder) in this repository.
-5. Place the files you downloaded in the new directory (folder) you created.
-6. Restart Home Assistant
-7. In the HA UI go to "Configuration" -> "Integrations" click "+" and search for "Lightstack custom component"
+### HACS (Recommended)
 
-Using your HA configuration directory (folder) as a starting point you should now also have this:
+1. Open HACS in Home Assistant
+2. Go to "Integrations"
+3. Click the three dots in the top right corner
+4. Select "Custom repositories"
+5. Add `https://github.com/sjafferali/lightstack-homeassistant` as an Integration
+6. Click "Install"
+7. Restart Home Assistant
 
-```text
-custom_components/lightstack_homeassistant/translations/en.json
-custom_components/lightstack_homeassistant/translations/fr.json
-custom_components/lightstack_homeassistant/translations/nb.json
-custom_components/lightstack_homeassistant/translations/sensor.en.json
-custom_components/lightstack_homeassistant/translations/sensor.fr.json
-custom_components/lightstack_homeassistant/translations/sensor.nb.json
-custom_components/lightstack_homeassistant/translations/sensor.nb.json
-custom_components/lightstack_homeassistant/__init__.py
-custom_components/lightstack_homeassistant/api.py
-custom_components/lightstack_homeassistant/binary_sensor.py
-custom_components/lightstack_homeassistant/config_flow.py
-custom_components/lightstack_homeassistant/const.py
-custom_components/lightstack_homeassistant/manifest.json
-custom_components/lightstack_homeassistant/sensor.py
-custom_components/lightstack_homeassistant/switch.py
+### Manual Installation
+
+1. Copy the `custom_components/lightstack` directory to your Home Assistant's `custom_components` directory
+2. Restart Home Assistant
+
+After installation:
+
+1. Go to Settings -> Devices & Services
+2. Click "+ Add Integration"
+3. Search for "LightStack"
+4. Enter your LightStack server host and port
+
+## Configuration
+
+The integration is configured through the UI:
+
+| Field | Description | Default |
+|-------|-------------|---------|
+| Host | Hostname or IP of your LightStack server | `localhost` |
+| Port | WebSocket API port | `8080` |
+
+## Sensor Attributes
+
+The Current Alert sensor provides these attributes for use in automations:
+
+| Attribute | Description |
+|-----------|-------------|
+| `is_all_clear` | Boolean indicating if all alerts are cleared |
+| `active_count` | Number of currently active alerts |
+| `alert_key` | Unique identifier of the current alert |
+| `effective_priority` | Priority level (1-5) of the current alert |
+| `priority_name` | Human-readable priority (Critical, High, Medium, Low, Info) |
+| `led_color` | Inovelli LED color value (0-255) |
+| `led_color_name` | Human-readable color name |
+| `led_effect` | LED effect (solid, blink, pulse, chase) |
+| `last_triggered` | Timestamp when the alert was last triggered |
+| `description` | Alert description if configured |
+
+## Example Automations
+
+### Trigger an alert when garage door opens
+
+```yaml
+automation:
+  - alias: "Alert on Garage Door Open"
+    trigger:
+      - platform: state
+        entity_id: cover.garage_door
+        to: "open"
+    action:
+      - service: lightstack.trigger_alert
+        data:
+          alert_key: "garage_door_open"
+          priority: 2
+          note: "Garage door opened"
 ```
 
-## Configuration is done in the UI
+### Clear alert when garage door closes
 
-<!---->
+```yaml
+automation:
+  - alias: "Clear Garage Door Alert"
+    trigger:
+      - platform: state
+        entity_id: cover.garage_door
+        to: "closed"
+    action:
+      - service: lightstack.clear_alert
+        data:
+          alert_key: "garage_door_open"
+```
 
-## Contributions are welcome!
+### Set Inovelli LED based on LightStack state
 
-If you want to contribute to this please read the [Contribution guidelines](CONTRIBUTING.md)
+```yaml
+automation:
+  - alias: "Update Inovelli LED from LightStack"
+    trigger:
+      - platform: state
+        entity_id: sensor.lightstack_current_alert
+    action:
+      - choose:
+          - conditions:
+              - condition: state
+                entity_id: sensor.lightstack_current_alert
+                state: "All Clear"
+            sequence:
+              - service: zwave_js.set_config_parameter
+                target:
+                  entity_id: light.inovelli_switch
+                data:
+                  parameter: "LED Strip Effect"
+                  value: 0  # Off
+          - conditions:
+              - condition: template
+                value_template: "{{ state_attr('sensor.lightstack_current_alert', 'led_color') is not none }}"
+            sequence:
+              - service: zwave_js.set_config_parameter
+                target:
+                  entity_id: light.inovelli_switch
+                data:
+                  parameter: "LED Strip Color"
+                  value: "{{ state_attr('sensor.lightstack_current_alert', 'led_color') }}"
+              - service: zwave_js.set_config_parameter
+                target:
+                  entity_id: light.inovelli_switch
+                data:
+                  parameter: "LED Strip Effect"
+                  value: >
+                    {% set effect = state_attr('sensor.lightstack_current_alert', 'led_effect') %}
+                    {% if effect == 'pulse' %}2
+                    {% elif effect == 'blink' %}3
+                    {% elif effect == 'chase' %}4
+                    {% else %}1{% endif %}
+```
+
+## Requirements
+
+- Home Assistant 2023.1.0 or newer
+- LightStack server running and accessible
+
+## Troubleshooting
+
+### Cannot Connect
+
+1. Verify LightStack server is running
+2. Check the host and port are correct
+3. Ensure there are no firewalls blocking the WebSocket connection
+4. Check Home Assistant logs for detailed error messages
+
+### Entities Not Updating
+
+The integration uses WebSocket push notifications. If entities stop updating:
+
+1. Check if LightStack server is still running
+2. Reload the integration from Settings -> Devices & Services
+3. Check logs for reconnection messages
+
+## Contributing
+
+Contributions are welcome! Please read the [Contribution guidelines](CONTRIBUTING.md).
 
 ## Credits
 
 This project was generated from [@oncleben31](https://github.com/oncleben31)'s [Home Assistant Custom Component Cookiecutter](https://github.com/oncleben31/cookiecutter-homeassistant-custom-component) template.
-
-Code template was mainly taken from [@Ludeeus](https://github.com/ludeeus)'s [integration_blueprint][integration_blueprint] template
 
 ---
 
 [integration_blueprint]: https://github.com/custom-components/integration_blueprint
 [black]: https://github.com/psf/black
 [black-shield]: https://img.shields.io/badge/code%20style-black-000000.svg?style=for-the-badge
-[buymecoffee]: https://www.buymeacoffee.com/sjafferali
-[buymecoffeebadge]: https://img.shields.io/badge/buy%20me%20a%20coffee-donate-yellow.svg?style=for-the-badge
 [commits-shield]: https://img.shields.io/github/commit-activity/y/sjafferali/lightstack-homeassistant.svg?style=for-the-badge
 [commits]: https://github.com/sjafferali/lightstack-homeassistant/commits/main
 [hacs]: https://hacs.xyz
 [hacsbadge]: https://img.shields.io/badge/HACS-Custom-orange.svg?style=for-the-badge
-[discord]: https://discord.gg/Qa5fW2R
-[discord-shield]: https://img.shields.io/discord/330944238910963714.svg?style=for-the-badge
-[exampleimg]: example.png
-[forum-shield]: https://img.shields.io/badge/community-forum-brightgreen.svg?style=for-the-badge
-[forum]: https://community.home-assistant.io/
 [license-shield]: https://img.shields.io/github/license/sjafferali/lightstack-homeassistant.svg?style=for-the-badge
 [maintenance-shield]: https://img.shields.io/badge/maintainer-%40sjafferali-blue.svg?style=for-the-badge
 [pre-commit]: https://github.com/pre-commit/pre-commit

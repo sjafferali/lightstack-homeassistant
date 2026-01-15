@@ -1,0 +1,100 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "LightStack",
+        "description": "Connect to your LightStack server for priority-based alert management.",
+        "data": {
+          "host": "Host",
+          "port": "Port"
+        },
+        "data_description": {
+          "host": "Hostname or IP address of the LightStack server",
+          "port": "Port number for the LightStack WebSocket API (default: 8080)"
+        }
+      }
+    },
+    "error": {
+      "cannot_connect": "Unable to connect to LightStack server. Please verify the host and port."
+    },
+    "abort": {
+      "already_configured": "This LightStack server is already configured."
+    }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "title": "LightStack Options",
+        "description": "Configure LightStack integration options."
+      }
+    }
+  },
+  "entity": {
+    "sensor": {
+      "current_alert": {
+        "name": "Current Alert",
+        "state": {
+          "all_clear": "All Clear"
+        }
+      }
+    },
+    "binary_sensor": {
+      "alert_active": {
+        "name": "Alert Active",
+        "state": {
+          "on": "Active",
+          "off": "Clear"
+        }
+      }
+    },
+    "button": {
+      "clear_all_alerts": {
+        "name": "Clear All Alerts"
+      }
+    }
+  },
+  "services": {
+    "trigger_alert": {
+      "name": "Trigger Alert",
+      "description": "Trigger a LightStack alert to activate LED notification.",
+      "fields": {
+        "alert_key": {
+          "name": "Alert Key",
+          "description": "Unique identifier for the alert (e.g., 'garage_door_open')."
+        },
+        "priority": {
+          "name": "Priority",
+          "description": "Override priority level (1=Critical, 2=High, 3=Medium, 4=Low, 5=Info)."
+        },
+        "note": {
+          "name": "Note",
+          "description": "Optional note for the audit trail."
+        }
+      }
+    },
+    "clear_alert": {
+      "name": "Clear Alert",
+      "description": "Clear a specific LightStack alert.",
+      "fields": {
+        "alert_key": {
+          "name": "Alert Key",
+          "description": "The alert key to clear."
+        },
+        "note": {
+          "name": "Note",
+          "description": "Optional note for the audit trail."
+        }
+      }
+    },
+    "clear_all_alerts": {
+      "name": "Clear All Alerts",
+      "description": "Clear all active LightStack alerts.",
+      "fields": {
+        "note": {
+          "name": "Note",
+          "description": "Optional note for the audit trail."
+        }
+      }
+    }
+  }
+}
