@@ -22,19 +22,19 @@ A Home Assistant custom component for [LightStack](https://github.com/sjafferali
 
 ## Platforms
 
-| Platform | Description |
-|----------|-------------|
-| `sensor` | Shows the current (highest priority) active alert name with LED attributes |
-| `binary_sensor` | Indicates if any alert is currently active (`on`) or all clear (`off`) |
-| `button` | Clear all active alerts with a single press |
+| Platform        | Description                                                                |
+| --------------- | -------------------------------------------------------------------------- |
+| `sensor`        | Shows the current (highest priority) active alert name with LED attributes |
+| `binary_sensor` | Indicates if any alert is currently active (`on`) or all clear (`off`)     |
+| `button`        | Clear all active alerts with a single press                                |
 
 ## Services
 
-| Service | Description |
-|---------|-------------|
-| `lightstack.trigger_alert` | Trigger an alert by key, with optional priority override |
-| `lightstack.clear_alert` | Clear a specific alert by key |
-| `lightstack.clear_all_alerts` | Clear all active alerts |
+| Service                       | Description                                              |
+| ----------------------------- | -------------------------------------------------------- |
+| `lightstack.trigger_alert`    | Trigger an alert by key, with optional priority override |
+| `lightstack.clear_alert`      | Clear a specific alert by key                            |
+| `lightstack.clear_all_alerts` | Clear all active alerts                                  |
 
 ## Installation
 
@@ -64,27 +64,27 @@ After installation:
 
 The integration is configured through the UI:
 
-| Field | Description | Default |
-|-------|-------------|---------|
-| Host | Hostname or IP of your LightStack server | `localhost` |
-| Port | WebSocket API port | `8080` |
+| Field | Description                              | Default     |
+| ----- | ---------------------------------------- | ----------- |
+| Host  | Hostname or IP of your LightStack server | `localhost` |
+| Port  | WebSocket API port                       | `8080`      |
 
 ## Sensor Attributes
 
 The Current Alert sensor provides these attributes for use in automations:
 
-| Attribute | Description |
-|-----------|-------------|
-| `is_all_clear` | Boolean indicating if all alerts are cleared |
-| `active_count` | Number of currently active alerts |
-| `alert_key` | Unique identifier of the current alert |
-| `effective_priority` | Priority level (1-5) of the current alert |
-| `priority_name` | Human-readable priority (Critical, High, Medium, Low, Info) |
-| `led_color` | Inovelli LED color value (0-255) |
-| `led_color_name` | Human-readable color name |
-| `led_effect` | LED effect (solid, blink, pulse, chase) |
-| `last_triggered` | Timestamp when the alert was last triggered |
-| `description` | Alert description if configured |
+| Attribute            | Description                                                 |
+| -------------------- | ----------------------------------------------------------- |
+| `is_all_clear`       | Boolean indicating if all alerts are cleared                |
+| `active_count`       | Number of currently active alerts                           |
+| `alert_key`          | Unique identifier of the current alert                      |
+| `effective_priority` | Priority level (1-5) of the current alert                   |
+| `priority_name`      | Human-readable priority (Critical, High, Medium, Low, Info) |
+| `led_color`          | Inovelli LED color value (0-255)                            |
+| `led_color_name`     | Human-readable color name                                   |
+| `led_effect`         | LED effect (solid, blink, pulse, chase)                     |
+| `last_triggered`     | Timestamp when the alert was last triggered                 |
+| `description`        | Alert description if configured                             |
 
 ## Example Automations
 
@@ -140,7 +140,7 @@ automation:
                   entity_id: light.inovelli_switch
                 data:
                   parameter: "LED Strip Effect"
-                  value: 0  # Off
+                  value: 0 # Off
           - conditions:
               - condition: template
                 value_template: "{{ state_attr('sensor.lightstack_current_alert', 'led_color') is not none }}"

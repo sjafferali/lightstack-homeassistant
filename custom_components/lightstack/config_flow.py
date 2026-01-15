@@ -1,5 +1,4 @@
 """Config flow for LightStack integration."""
-
 from __future__ import annotations
 
 import logging
@@ -7,18 +6,18 @@ from typing import Any
 
 import voluptuous as vol
 from homeassistant import config_entries
-from homeassistant.const import CONF_HOST, CONF_PORT
 from homeassistant.core import callback
 from homeassistant.data_entry_flow import FlowResult
 from homeassistant.helpers.aiohttp_client import async_create_clientsession
 
-from .const import (
-    DEFAULT_HOST,
-    DEFAULT_PORT,
-    DOMAIN,
-    NAME,
-)
-from .websocket import LightStackConnectionError, LightStackWebSocket
+from .const import CONF_HOST
+from .const import CONF_PORT
+from .const import DEFAULT_HOST
+from .const import DEFAULT_PORT
+from .const import DOMAIN
+from .const import NAME
+from .websocket import LightStackConnectionError
+from .websocket import LightStackWebSocket
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -27,7 +26,6 @@ class LightStackConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
     """Handle a config flow for LightStack."""
 
     VERSION = 1
-    CONNECTION_CLASS = config_entries.CONN_CLASS_LOCAL_PUSH
 
     def __init__(self) -> None:
         """Initialize the config flow."""

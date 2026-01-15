@@ -1,25 +1,23 @@
 """WebSocket client for LightStack integration."""
-
 from __future__ import annotations
 
 import asyncio
 import logging
 import uuid
-from typing import Any, Callable
+from typing import Any
+from typing import Callable
 
 import aiohttp
 
-from .const import (
-    CONNECTION_TIMEOUT,
-    RECONNECT_INTERVAL,
-    WS_CMD_CLEAR_ALERT,
-    WS_CMD_CLEAR_ALL_ALERTS,
-    WS_CMD_GET_STATE,
-    WS_CMD_PING,
-    WS_CMD_TRIGGER_ALERT,
-    WS_EVENT_COMMAND_RESULT,
-    WS_EVENT_ERROR,
-)
+from .const import CONNECTION_TIMEOUT
+from .const import RECONNECT_INTERVAL
+from .const import WS_CMD_CLEAR_ALERT
+from .const import WS_CMD_CLEAR_ALL_ALERTS
+from .const import WS_CMD_GET_STATE
+from .const import WS_CMD_PING
+from .const import WS_CMD_TRIGGER_ALERT
+from .const import WS_EVENT_COMMAND_RESULT
+from .const import WS_EVENT_ERROR
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -426,7 +424,9 @@ class LightStackWebSocket:
                 _LOGGER.info("Attempting to reconnect to LightStack...")
                 initial_state = await self.reconnect()
                 if initial_state is not None:
-                    await self._notify_listeners("reconnected", {"state": initial_state})
+                    await self._notify_listeners(
+                        "reconnected", {"state": initial_state}
+                    )
                 else:
                     await asyncio.sleep(RECONNECT_INTERVAL)
                     continue

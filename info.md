@@ -17,19 +17,19 @@ A Home Assistant custom component for **LightStack** - a priority-based alert ma
 
 **This component will set up the following platforms.**
 
-| Platform | Description |
-|----------|-------------|
-| `sensor` | Shows the current (highest priority) active alert |
-| `binary_sensor` | Indicates if any alert is active |
-| `button` | Clear all active alerts |
+| Platform        | Description                                       |
+| --------------- | ------------------------------------------------- |
+| `sensor`        | Shows the current (highest priority) active alert |
+| `binary_sensor` | Indicates if any alert is active                  |
+| `button`        | Clear all active alerts                           |
 
 ## Services
 
-| Service | Description |
-|---------|-------------|
-| `lightstack.trigger_alert` | Trigger an alert with optional priority override |
-| `lightstack.clear_alert` | Clear a specific alert |
-| `lightstack.clear_all_alerts` | Clear all active alerts |
+| Service                       | Description                                      |
+| ----------------------------- | ------------------------------------------------ |
+| `lightstack.trigger_alert`    | Trigger an alert with optional priority override |
+| `lightstack.clear_alert`      | Clear a specific alert                           |
+| `lightstack.clear_all_alerts` | Clear all active alerts                          |
 
 {% if not installed %}
 

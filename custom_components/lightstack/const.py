@@ -1,5 +1,4 @@
 """Constants for LightStack integration."""
-
 from typing import Final
 
 # Base component constants
@@ -70,7 +69,12 @@ LED_EFFECT_BLINK: Final = "blink"
 LED_EFFECT_PULSE: Final = "pulse"
 LED_EFFECT_CHASE: Final = "chase"
 
-LED_EFFECTS: Final = [LED_EFFECT_SOLID, LED_EFFECT_BLINK, LED_EFFECT_PULSE, LED_EFFECT_CHASE]
+LED_EFFECTS: Final = [
+    LED_EFFECT_SOLID,
+    LED_EFFECT_BLINK,
+    LED_EFFECT_PULSE,
+    LED_EFFECT_CHASE,
+]
 
 # Inovelli LED Color mapping (0-255)
 LED_COLOR_RED: Final = 0
