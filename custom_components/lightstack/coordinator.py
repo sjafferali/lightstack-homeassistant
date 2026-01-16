@@ -163,15 +163,24 @@ class LightStackCoordinator(DataUpdateCoordinator[LightStackState]):
 
             if not self.websocket.connected:
                 _LOGGER.info("LightStack disconnected, attempting reconnection...")
-                try:
-                    initial_data = await self.websocket.reconnect()
-                    if initial_data is not None:
-                        _LOGGER.info("Successfully reconnected to LightStack")
-                        self.async_set_updated_data(
-                            LightStackState.from_dict(initial_data)
-                        )
-                except Exception as err:
-                    _LOGGER.warning("Failed to reconnect to LightStack: %s", err)
+                await self._attempt_reconnect()
+            else:
+                # Ping to verify connection is actually alive (detect stale connections)
+                if not await self.websocket.ping():
+                    _LOGGER.warning(
+                        "LightStack ping failed, connection appears stale. Reconnecting..."
+                    )
+                    await self._attempt_reconnect()
+
+    async def _attempt_reconnect(self) -> None:
+        """Attempt to reconnect to LightStack."""
+        try:
+            initial_data = await self.websocket.reconnect()
+            if initial_data is not None:
+                _LOGGER.info("Successfully reconnected to LightStack")
+                self.async_set_updated_data(LightStackState.from_dict(initial_data))
+        except Exception as err:
+            _LOGGER.warning("Failed to reconnect to LightStack: %s", err)
 
     @callback
     def _handle_event(self, event_type: str, event_data: dict[str, Any]) -> None:
