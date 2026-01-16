@@ -12,6 +12,40 @@
 
 A Home Assistant custom component for [LightStack](https://github.com/sjafferali/LightStack) - a priority-based alert management system for Inovelli LED switches.
 
+![Home Assistant Device](docs/screenshots/ha-device.png)
+
+## What is LightStack?
+
+[LightStack](https://github.com/sjafferali/LightStack) is a priority-based alert management system designed specifically for Inovelli smart switches with LED notification bars. It solves a common problem: when multiple alerts are active, only one LED state can be displayed at a time.
+
+**The Problem:**
+
+```
+Without LightStack:
+  alert 1 fires   -> switch displays alert 1
+  alert 2 fires   -> switch displays alert 2
+  alert 2 clears  -> switch shows "all clear" (WRONG! alert 1 is still active)
+```
+
+**The Solution:**
+
+```
+With LightStack:
+  alert 1 fires   -> switch displays alert 1
+  alert 2 fires   -> switch displays alert 2 (if higher priority)
+  alert 2 clears  -> switch displays alert 1 (correctly shows remaining alert)
+```
+
+LightStack provides:
+
+- **Centralized alert state tracking** across all your automations
+- **Priority-based display** (5 levels: Critical, High, Medium, Low, Info)
+- **Full LED customization** per alert (color, effect, brightness, duration)
+- **Real-time updates** via WebSocket
+- **Web UI** for managing alerts and viewing history
+
+For more information about LightStack, including installation and configuration, visit the [LightStack repository](https://github.com/sjafferali/LightStack).
+
 ## Features
 
 - **Real-time Updates**: Uses WebSocket for instant push notifications - no polling required
@@ -235,7 +269,7 @@ automation:
 ## Requirements
 
 - Home Assistant 2023.1.0 or newer
-- LightStack server running and accessible
+- [LightStack](https://github.com/sjafferali/LightStack) server running and accessible
 
 ## Troubleshooting
 
@@ -254,6 +288,10 @@ The integration uses WebSocket push notifications. If entities stop updating:
 2. Reload the integration from Settings -> Devices & Services
 3. Check logs for reconnection messages
 
+## Related Projects
+
+- [LightStack](https://github.com/sjafferali/LightStack) - The priority-based alert management server this integration connects to
+
 ## Contributing
 
 Contributions are welcome! Please read the [Contribution guidelines](CONTRIBUTING.md).
@@ -264,7 +302,7 @@ This project was generated from [@oncleben31](https://github.com/oncleben31)'s [
 
 ---
 
-[integration_blueprint]: https://github.com/custom-components/integration_blueprint
+[integration_blueprint]: https://github.com/ludeeus/integration_blueprint
 [black]: https://github.com/psf/black
 [black-shield]: https://img.shields.io/badge/code%20style-black-000000.svg?style=for-the-badge
 [commits-shield]: https://img.shields.io/github/commit-activity/y/sjafferali/lightstack-homeassistant.svg?style=for-the-badge
