@@ -37,21 +37,38 @@ class LightStackAlert:
     default_priority: int = 3
     led_color: int | None = None
     led_effect: str | None = None
+    led_brightness: int | None = None
+    led_duration: int | None = None
 
     @classmethod
     def from_dict(cls, data: dict[str, Any]) -> LightStackAlert:
         """Create an alert from a dictionary."""
+        # Handle nested config data (from API responses)
+        config = data.get("config", {})
+
         return cls(
             alert_key=data.get("alert_key", ""),
             is_active=data.get("is_active", False),
             effective_priority=data.get("effective_priority", 3),
             priority=data.get("priority"),
             last_triggered_at=data.get("last_triggered_at"),
-            name=data.get("name"),
-            description=data.get("description"),
-            default_priority=data.get("default_priority", 3),
-            led_color=data.get("led_color"),
-            led_effect=data.get("led_effect"),
+            name=config.get("name") if config else data.get("name"),
+            description=(
+                config.get("description") if config else data.get("description")
+            ),
+            default_priority=(
+                config.get("default_priority", 3)
+                if config
+                else data.get("default_priority", 3)
+            ),
+            led_color=config.get("led_color") if config else data.get("led_color"),
+            led_effect=config.get("led_effect") if config else data.get("led_effect"),
+            led_brightness=(
+                config.get("led_brightness") if config else data.get("led_brightness")
+            ),
+            led_duration=(
+                config.get("led_duration") if config else data.get("led_duration")
+            ),
         )
 
 

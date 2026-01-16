@@ -35,6 +35,50 @@
         "name": "Current Alert",
         "state": {
           "all_clear": "All Clear"
+        },
+        "state_attributes": {
+          "is_all_clear": {
+            "name": "All Clear"
+          },
+          "active_count": {
+            "name": "Active Count"
+          },
+          "alert_key": {
+            "name": "Alert Key"
+          },
+          "effective_priority": {
+            "name": "Priority Level"
+          },
+          "priority_name": {
+            "name": "Priority"
+          },
+          "led_color": {
+            "name": "LED Color Value"
+          },
+          "led_color_name": {
+            "name": "LED Color"
+          },
+          "led_effect": {
+            "name": "LED Effect Code"
+          },
+          "led_effect_name": {
+            "name": "LED Effect"
+          },
+          "led_brightness": {
+            "name": "LED Brightness"
+          },
+          "led_duration": {
+            "name": "LED Duration Value"
+          },
+          "led_duration_name": {
+            "name": "LED Duration"
+          },
+          "last_triggered": {
+            "name": "Last Triggered"
+          },
+          "description": {
+            "name": "Description"
+          }
         }
       }
     },

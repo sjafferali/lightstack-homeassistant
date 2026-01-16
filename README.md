@@ -81,10 +81,53 @@ The Current Alert sensor provides these attributes for use in automations:
 | `effective_priority` | Priority level (1-5) of the current alert                   |
 | `priority_name`      | Human-readable priority (Critical, High, Medium, Low, Info) |
 | `led_color`          | Inovelli LED color value (0-255)                            |
-| `led_color_name`     | Human-readable color name                                   |
-| `led_effect`         | LED effect (solid, blink, pulse, chase)                     |
+| `led_color_name`     | Human-readable color name (Red, Blue, Green, etc.)          |
+| `led_effect`         | LED effect code (solid, pulse, chase, aurora, etc.)         |
+| `led_effect_name`    | Human-readable effect name (Solid, Pulse, Chase, etc.)      |
+| `led_brightness`     | LED brightness level (0-100)                                |
+| `led_duration`       | LED duration value (encoded, see below)                     |
+| `led_duration_name`  | Human-readable duration (e.g., "5 Minutes", "Indefinitely") |
 | `last_triggered`     | Timestamp when the alert was last triggered                 |
 | `description`        | Alert description if configured                             |
+
+### LED Effects
+
+All supported Inovelli Blue series LED effects:
+
+| Effect Code      | Display Name   |
+| ---------------- | -------------- |
+| `off`            | Off            |
+| `solid`          | Solid          |
+| `fast_blink`     | Fast Blink     |
+| `slow_blink`     | Slow Blink     |
+| `pulse`          | Pulse          |
+| `chase`          | Chase          |
+| `open_close`     | Open/Close     |
+| `small_to_big`   | Small to Big   |
+| `aurora`         | Aurora         |
+| `slow_falling`   | Slow Falling   |
+| `medium_falling` | Medium Falling |
+| `fast_falling`   | Fast Falling   |
+| `slow_rising`    | Slow Rising    |
+| `medium_rising`  | Medium Rising  |
+| `fast_rising`    | Fast Rising    |
+| `medium_blink`   | Medium Blink   |
+| `slow_chase`     | Slow Chase     |
+| `fast_chase`     | Fast Chase     |
+| `fast_siren`     | Fast Siren     |
+| `slow_siren`     | Slow Siren     |
+| `clear_effect`   | Clear Effect   |
+
+### LED Duration Encoding
+
+Duration values are encoded as follows:
+
+| Value Range | Unit       | Example            |
+| ----------- | ---------- | ------------------ |
+| 1-60        | Seconds    | 30 = 30 seconds    |
+| 61-120      | Minutes    | 65 = 5 minutes     |
+| 121-254     | Hours      | 132 = 12 hours     |
+| 255         | Indefinite | Runs until cleared |
 
 ## Example Automations
 
@@ -120,7 +163,39 @@ automation:
           alert_key: "garage_door_open"
 ```
 
-### Set Inovelli LED based on LightStack state
+### Set Inovelli LED based on LightStack state (Zigbee2MQTT)
+
+For Inovelli Blue series switches with Zigbee2MQTT:
+
+```yaml
+automation:
+  - alias: "Update Inovelli LED from LightStack"
+    trigger:
+      - platform: state
+        entity_id: sensor.lightstack_current_alert
+    action:
+      - service: mqtt.publish
+        data:
+          topic: "zigbee2mqtt/Office Switch/set"
+          payload_template: >
+            {% set sensor = states.sensor.lightstack_current_alert %}
+            {% if sensor.state == 'All Clear' %}
+              {"led_effect": {"effect": "off"}}
+            {% else %}
+              {
+                "led_effect": {
+                  "effect": "{{ sensor.attributes.led_effect | default('solid') }}",
+                  "color": {{ sensor.attributes.led_color | default(0) }},
+                  "level": {{ sensor.attributes.led_brightness | default(100) }},
+                  "duration": {{ sensor.attributes.led_duration | default(255) }}
+                }
+              }
+            {% endif %}
+```
+
+### Set Inovelli LED (Z-Wave)
+
+For Z-Wave Inovelli switches:
 
 ```yaml
 automation:
@@ -139,8 +214,8 @@ automation:
                 target:
                   entity_id: light.inovelli_switch
                 data:
-                  parameter: "LED Strip Effect"
-                  value: 0 # Off
+                  parameter: 16
+                  value: 0 # Clear notification
           - conditions:
               - condition: template
                 value_template: "{{ state_attr('sensor.lightstack_current_alert', 'led_color') is not none }}"
@@ -149,19 +224,12 @@ automation:
                 target:
                   entity_id: light.inovelli_switch
                 data:
-                  parameter: "LED Strip Color"
-                  value: "{{ state_attr('sensor.lightstack_current_alert', 'led_color') }}"
-              - service: zwave_js.set_config_parameter
-                target:
-                  entity_id: light.inovelli_switch
-                data:
-                  parameter: "LED Strip Effect"
+                  parameter: 16
                   value: >
+                    {% set color = state_attr('sensor.lightstack_current_alert', 'led_color') | default(0) %}
                     {% set effect = state_attr('sensor.lightstack_current_alert', 'led_effect') %}
-                    {% if effect == 'pulse' %}2
-                    {% elif effect == 'blink' %}3
-                    {% elif effect == 'chase' %}4
-                    {% else %}1{% endif %}
+                    {% set effect_num = {'solid': 1, 'fast_blink': 2, 'slow_blink': 3, 'pulse': 4}.get(effect, 1) %}
+                    {{ (color * 65536) + (effect_num * 256) + 255 }}
 ```
 
 ## Requirements

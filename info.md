@@ -9,11 +9,14 @@ A Home Assistant custom component for **LightStack** - a priority-based alert ma
 
 ## Features
 
-- Real-time updates via WebSocket (no polling)
-- Current alert sensor with LED color/effect attributes
-- Alert active binary sensor
-- Clear all alerts button
-- Services for triggering and clearing alerts
+- **Real-time updates** via WebSocket (no polling required)
+- **Current alert sensor** with full LED effect attributes:
+  - Color, effect, brightness, duration
+  - Human-readable names for all values
+- **21 LED effects** supported for Inovelli Blue series switches
+- **Alert active binary sensor** for simple automations
+- **Clear all alerts button** for quick management
+- **Services** for triggering and clearing alerts from automations
 
 **This component will set up the following platforms.**
 

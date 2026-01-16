@@ -16,14 +16,19 @@ from .const import (
     ATTR_EFFECTIVE_PRIORITY,
     ATTR_IS_ALL_CLEAR,
     ATTR_LAST_TRIGGERED,
+    ATTR_LED_BRIGHTNESS,
     ATTR_LED_COLOR,
     ATTR_LED_COLOR_NAME,
+    ATTR_LED_DURATION,
+    ATTR_LED_DURATION_NAME,
     ATTR_LED_EFFECT,
+    ATTR_LED_EFFECT_NAME,
     ATTR_PRIORITY_NAME,
     DOMAIN,
     ICON_ALERT,
     ICON_CHECK_CIRCLE,
     LED_COLOR_NAMES,
+    LED_EFFECT_NAMES,
     PRIORITY_NAMES,
     STATE_ALL_CLEAR,
 )
@@ -98,9 +103,17 @@ class LightStackCurrentAlertSensor(LightStackEntity, SensorEntity):
             attrs[ATTR_PRIORITY_NAME] = PRIORITY_NAMES.get(
                 alert.effective_priority, "Unknown"
             )
+            # LED color attributes
             attrs[ATTR_LED_COLOR] = alert.led_color
             attrs[ATTR_LED_COLOR_NAME] = self._get_color_name(alert.led_color)
+            # LED effect attributes
             attrs[ATTR_LED_EFFECT] = alert.led_effect
+            attrs[ATTR_LED_EFFECT_NAME] = self._get_effect_name(alert.led_effect)
+            # LED brightness and duration
+            attrs[ATTR_LED_BRIGHTNESS] = alert.led_brightness
+            attrs[ATTR_LED_DURATION] = alert.led_duration
+            attrs[ATTR_LED_DURATION_NAME] = self._get_duration_name(alert.led_duration)
+            # Other attributes
             attrs[ATTR_LAST_TRIGGERED] = alert.last_triggered_at
             attrs[ATTR_DESCRIPTION] = alert.description
 
@@ -118,3 +131,35 @@ class LightStackCurrentAlertSensor(LightStackEntity, SensorEntity):
         # Find the closest match
         closest_color = min(LED_COLOR_NAMES.keys(), key=lambda x: abs(x - color_value))
         return LED_COLOR_NAMES[closest_color]
+
+    def _get_effect_name(self, effect_value: str | None) -> str | None:
+        """Get the display name for an effect value."""
+        if effect_value is None:
+            return None
+        return LED_EFFECT_NAMES.get(
+            effect_value, effect_value.replace("_", " ").title()
+        )
+
+    def _get_duration_name(self, duration_value: int | None) -> str | None:
+        """Get the human-readable duration name.
+
+        Duration encoding:
+        - 0: Disabled
+        - 1-60: seconds
+        - 61-120: minutes (value - 60)
+        - 121-254: hours (value - 120)
+        - 255: Indefinitely
+        """
+        if duration_value is None:
+            return None
+        if duration_value == 0:
+            return "Disabled"
+        if duration_value <= 60:
+            return f"{duration_value} Second{'s' if duration_value != 1 else ''}"
+        if duration_value <= 120:
+            minutes = duration_value - 60
+            return f"{minutes} Minute{'s' if minutes != 1 else ''}"
+        if duration_value <= 254:
+            hours = duration_value - 120
+            return f"{hours} Hour{'s' if hours != 1 else ''}"
+        return "Indefinitely"

@@ -64,18 +64,30 @@ PRIORITY_NAMES: Final = {
     PRIORITY_INFO: "Info",
 }
 
-# LED Effects
-LED_EFFECT_SOLID: Final = "solid"
-LED_EFFECT_BLINK: Final = "blink"
-LED_EFFECT_PULSE: Final = "pulse"
-LED_EFFECT_CHASE: Final = "chase"
-
-LED_EFFECTS: Final = [
-    LED_EFFECT_SOLID,
-    LED_EFFECT_BLINK,
-    LED_EFFECT_PULSE,
-    LED_EFFECT_CHASE,
-]
+# LED Effects (Inovelli)
+LED_EFFECT_NAMES: Final = {
+    "off": "Off",
+    "solid": "Solid",
+    "fast_blink": "Fast Blink",
+    "slow_blink": "Slow Blink",
+    "pulse": "Pulse",
+    "chase": "Chase",
+    "open_close": "Open/Close",
+    "small_to_big": "Small to Big",
+    "aurora": "Aurora",
+    "slow_falling": "Slow Falling",
+    "medium_falling": "Medium Falling",
+    "fast_falling": "Fast Falling",
+    "slow_rising": "Slow Rising",
+    "medium_rising": "Medium Rising",
+    "fast_rising": "Fast Rising",
+    "medium_blink": "Medium Blink",
+    "slow_chase": "Slow Chase",
+    "fast_chase": "Fast Chase",
+    "fast_siren": "Fast Siren",
+    "slow_siren": "Slow Siren",
+    "clear_effect": "Clear Effect",
+}
 
 # Inovelli LED Color mapping (0-255)
 LED_COLOR_RED: Final = 0
@@ -116,6 +128,10 @@ ATTR_ACTIVE_COUNT: Final = "active_count"
 ATTR_LED_COLOR: Final = "led_color"
 ATTR_LED_COLOR_NAME: Final = "led_color_name"
 ATTR_LED_EFFECT: Final = "led_effect"
+ATTR_LED_EFFECT_NAME: Final = "led_effect_name"
+ATTR_LED_BRIGHTNESS: Final = "led_brightness"
+ATTR_LED_DURATION: Final = "led_duration"
+ATTR_LED_DURATION_NAME: Final = "led_duration_name"
 ATTR_LAST_TRIGGERED: Final = "last_triggered"
 ATTR_DESCRIPTION: Final = "description"
 ATTR_EFFECTIVE_PRIORITY: Final = "effective_priority"
