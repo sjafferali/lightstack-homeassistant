@@ -42,9 +42,21 @@ class LightStackAlert:
 
     @classmethod
     def from_dict(cls, data: dict[str, Any]) -> LightStackAlert:
-        """Create an alert from a dictionary."""
-        # Handle nested config data (from API responses)
-        config = data.get("config", {})
+        """Create an alert from a dictionary.
+
+        Handles both flat data (from WebSocket events) and nested config data
+        (from REST API responses where config fields are nested in 'config' key).
+        """
+        # Handle nested config data (from REST API responses)
+        # Use None as default (not {}) so empty dict doesn't cause issues
+        # (empty dict is truthy in Python, None is falsy)
+        config = data.get("config")
+
+        # Helper to get value from config (if present) or top-level data
+        def get_field(field_name: str, default: Any = None) -> Any:
+            if config and field_name in config:
+                return config.get(field_name, default)
+            return data.get(field_name, default)
 
         return cls(
             alert_key=data.get("alert_key", ""),
@@ -52,23 +64,13 @@ class LightStackAlert:
             effective_priority=data.get("effective_priority", 3),
             priority=data.get("priority"),
             last_triggered_at=data.get("last_triggered_at"),
-            name=config.get("name") if config else data.get("name"),
-            description=(
-                config.get("description") if config else data.get("description")
-            ),
-            default_priority=(
-                config.get("default_priority", 3)
-                if config
-                else data.get("default_priority", 3)
-            ),
-            led_color=config.get("led_color") if config else data.get("led_color"),
-            led_effect=config.get("led_effect") if config else data.get("led_effect"),
-            led_brightness=(
-                config.get("led_brightness") if config else data.get("led_brightness")
-            ),
-            led_duration=(
-                config.get("led_duration") if config else data.get("led_duration")
-            ),
+            name=get_field("name"),
+            description=get_field("description"),
+            default_priority=get_field("default_priority", 3),
+            led_color=get_field("led_color"),
+            led_effect=get_field("led_effect"),
+            led_brightness=get_field("led_brightness"),
+            led_duration=get_field("led_duration"),
         )
 
 
