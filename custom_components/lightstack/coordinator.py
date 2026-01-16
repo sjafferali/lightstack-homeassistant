@@ -210,7 +210,27 @@ class LightStackCoordinator(DataUpdateCoordinator[LightStackState]):
 
     def _handle_alert_triggered(self, event_data: dict[str, Any]) -> None:
         """Handle alert_triggered event."""
-        # Update current alert if it changed
+        # Update active alerts list with the triggered alert
+        alert_data = event_data.get("alert")
+        triggered_alert = LightStackAlert.from_dict(alert_data) if alert_data else None
+
+        active_alerts = list(self.data.active_alerts) if self.data else []
+        if triggered_alert:
+            # Add or update the alert in the list
+            existing_idx = next(
+                (
+                    i
+                    for i, a in enumerate(active_alerts)
+                    if a.alert_key == triggered_alert.alert_key
+                ),
+                None,
+            )
+            if existing_idx is not None:
+                active_alerts[existing_idx] = triggered_alert
+            else:
+                active_alerts.append(triggered_alert)
+
+        # Update current alert only if it changed
         if event_data.get("current_changed", False):
             new_current_data = event_data.get("new_current")
             new_current = (
@@ -218,36 +238,18 @@ class LightStackCoordinator(DataUpdateCoordinator[LightStackState]):
                 if new_current_data
                 else None
             )
+        else:
+            # Keep existing current alert
+            new_current = self.data.current_alert if self.data else None
 
-            # Update active alerts list
-            alert_data = event_data.get("alert")
-            triggered_alert = (
-                LightStackAlert.from_dict(alert_data) if alert_data else None
-            )
-
-            active_alerts = list(self.data.active_alerts) if self.data else []
-            if triggered_alert:
-                # Add or update the alert in the list
-                existing_idx = next(
-                    (
-                        i
-                        for i, a in enumerate(active_alerts)
-                        if a.alert_key == triggered_alert.alert_key
-                    ),
-                    None,
-                )
-                if existing_idx is not None:
-                    active_alerts[existing_idx] = triggered_alert
-                else:
-                    active_alerts.append(triggered_alert)
-
-            new_state = LightStackState(
-                is_all_clear=False,
-                current_alert=new_current,
-                active_count=len(active_alerts),
-                active_alerts=active_alerts,
-            )
-            self.async_set_updated_data(new_state)
+        # Always update state to ensure sensor reflects the triggered alert
+        new_state = LightStackState(
+            is_all_clear=False,
+            current_alert=new_current,
+            active_count=len(active_alerts),
+            active_alerts=active_alerts,
+        )
+        self.async_set_updated_data(new_state)
 
     def _handle_alert_cleared(self, event_data: dict[str, Any]) -> None:
         """Handle alert_cleared event."""
