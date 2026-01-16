@@ -61,12 +61,15 @@ CLEAR_ALL_ALERTS_SCHEMA = vol.Schema(
 
 async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
     """Set up LightStack from a config entry."""
+    _LOGGER.debug("Starting LightStack setup for entry: %s", entry.entry_id)
+
     if hass.data.get(DOMAIN) is None:
         hass.data.setdefault(DOMAIN, {})
         _LOGGER.info(STARTUP_MESSAGE)
 
     host = entry.data[CONF_HOST]
     port = entry.data[CONF_PORT]
+    _LOGGER.debug("Configuring LightStack connection to %s:%s", host, port)
 
     # Create WebSocket client
     session = async_get_clientsession(hass)
@@ -77,13 +80,19 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
 
     # Set up the coordinator
     try:
+        _LOGGER.debug("Calling coordinator.async_setup()")
         success = await coordinator.async_setup()
+        _LOGGER.debug("coordinator.async_setup() returned: %s", success)
         if not success:
             raise ConfigEntryNotReady(
                 f"Failed to connect to LightStack at {host}:{port}"
             )
     except LightStackConnectionError as err:
+        _LOGGER.error("LightStack connection error: %s", err)
         raise ConfigEntryNotReady(str(err)) from err
+    except Exception as err:
+        _LOGGER.exception("Unexpected error during LightStack setup: %s", err)
+        raise
 
     # Store coordinator for platforms
     hass.data[DOMAIN][entry.entry_id] = coordinator
