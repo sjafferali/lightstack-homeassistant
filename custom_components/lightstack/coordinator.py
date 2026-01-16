@@ -176,7 +176,11 @@ class LightStackCoordinator(DataUpdateCoordinator[LightStackState]):
     @callback
     def _handle_event(self, event_type: str, event_data: dict[str, Any]) -> None:
         """Handle WebSocket events."""
-        _LOGGER.debug("Handling LightStack event: %s", event_type)
+        _LOGGER.debug(
+            "Handling LightStack event: %s with data keys: %s",
+            event_type,
+            list(event_data.keys()) if event_data else "None",
+        )
 
         if event_type == WS_EVENT_CURRENT_ALERT_CHANGED:
             self._handle_current_alert_changed(event_data)
@@ -210,6 +214,21 @@ class LightStackCoordinator(DataUpdateCoordinator[LightStackState]):
 
     def _handle_alert_triggered(self, event_data: dict[str, Any]) -> None:
         """Handle alert_triggered event."""
+        _LOGGER.debug(
+            "Processing alert_triggered: current_changed=%s, alert_key=%s, new_current=%s",
+            event_data.get("current_changed"),
+            (
+                event_data.get("alert", {}).get("alert_key")
+                if event_data.get("alert")
+                else None
+            ),
+            (
+                event_data.get("new_current", {}).get("alert_key")
+                if event_data.get("new_current")
+                else None
+            ),
+        )
+
         # Update active alerts list with the triggered alert
         alert_data = event_data.get("alert")
         triggered_alert = LightStackAlert.from_dict(alert_data) if alert_data else None
@@ -248,6 +267,12 @@ class LightStackCoordinator(DataUpdateCoordinator[LightStackState]):
             current_alert=new_current,
             active_count=len(active_alerts),
             active_alerts=active_alerts,
+        )
+        _LOGGER.debug(
+            "Setting new state: is_all_clear=%s, current_alert=%s, active_count=%d",
+            new_state.is_all_clear,
+            new_state.current_alert.alert_key if new_state.current_alert else None,
+            new_state.active_count,
         )
         self.async_set_updated_data(new_state)
 
